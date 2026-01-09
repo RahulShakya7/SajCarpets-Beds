@@ -20,6 +20,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def average_rating(self):
+        if hasattr(self, 'reviews') and self.reviews.exists():
+            total = sum([r.rating for r in self.reviews.all()])
+            return round(total / self.reviews.count(), 1)
+        return 0
+
 # model for storing pictures of products
 class ProductImage(models.Model):
     product = models.ForeignKey('Product', related_name='images', on_delete=models.CASCADE)

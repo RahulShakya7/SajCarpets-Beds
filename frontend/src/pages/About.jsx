@@ -79,10 +79,10 @@ export default function About() {
             )}
 
             <section className="w-full flex flex-col items-center text-center gap-6 py-16">
-                <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white">
-                    Why Choose Us?
-                </h2>
                 <div className="flex flex-col w-full gap-12 px-6 sm:px-12 md:px-16 lg:px-24 xl:px-[300px] py-[72px] bg-white dark:bg-gray-800">
+                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white py-8">
+                        Why Choose Us?
+                    </h2>
                     <AdvertisementCards data={featuresData} />
                 </div>
                 <Advertisements />

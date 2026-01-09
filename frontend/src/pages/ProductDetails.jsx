@@ -5,6 +5,7 @@ import Button from "../components/Button";
 import { useToast } from "../context/ToastContext";
 import CountdownTimer from "../components/Countdown";
 import StarRating from "../components/StarRating";
+import ReviewsSection from "../components/ReviewsSection";
 import ProductCard from "../components/shared/ProductCard";
 
 export default function ProductDetails() {
@@ -73,9 +74,9 @@ export default function ProductDetails() {
                         </h1>
 
                         <div className="flex items-center gap-3">
-                            <StarRating rating={4.5} /> {/* Mock rating for now */}
+                            <StarRating rating={product.average_rating || 0} />
                             <span className="text-base font-montserrat text-gray-600 dark:text-gray-400">
-                                (0 customer reviews)
+                                ({product.reviews_count || 0} customer reviews)
                             </span>
                         </div>
 
@@ -127,6 +128,7 @@ export default function ProductDetails() {
                                 Wishlist
                             </Button>
                             <Button
+                                disabled={true}
                                 onClick={() => addToast("Added to Compare", "success")}
                                 className="border border-gray-300 dark:border-gray-600 bg-gray-400 dark:bg-gray-800 px-6 py-3 rounded-lg text-base text-gray-400 hover:text-primary transition-colors"
                             >
@@ -141,12 +143,32 @@ export default function ProductDetails() {
                     <div className="py-6">
                         <div className="flex justify-center mb-8 gap-12">
                             <button onClick={() => setActiveTab("description")} className={`text-xl font-medium ${activeTab === "description" ? "text-primary border-b-2 border-primary" : "text-gray-500"}`}>Description</button>
-                            <button onClick={() => setActiveTab("reviews")} className={`text-xl font-medium ${activeTab === "reviews" ? "text-primary border-b-2 border-primary" : "text-gray-500"}`}>Reviews</button>
+                            <button onClick={() => setActiveTab("reviews")} className={`text-xl font-medium ${activeTab === "reviews" ? "text-primary border-b-2 border-primary" : "text-gray-500"}`}>Reviews ({product.reviews_count || 0})</button>
                         </div>
 
                         <div className="pb-8 text-gray-700 dark:text-gray-300">
-                            {activeTab === "description" && <p>{product.description}</p>}
-                            {activeTab === "reviews" && <p>No reviews yet.</p>}
+                            {activeTab === "description" && (
+                                <div className="space-y-6">
+                                    <p className="whitespace-pre-line">{product.description}</p>
+
+                                    {product.attributes && Object.keys(product.attributes).length > 0 && (
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                                            <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Specifications</h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                {Object.entries(product.attributes).map(([key, value]) => (
+                                                    <div key={key} className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
+                                                        <span className="font-medium text-gray-600 dark:text-gray-400">{key}</span>
+                                                        <span className="text-gray-900 dark:text-white">{value}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {activeTab === "reviews" && (
+                                <ReviewsSection productId={product.id} />
+                            )}
                         </div>
                     </div>
                 </div>

@@ -10,13 +10,23 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductPublicSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
+    average_rating = serializers.FloatField(read_only=True)
+    reviews_count = serializers.IntegerField(source='reviews.count', read_only=True)
+    attributes = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = [
             'id', 'name', 'slug', 'category_name',
-            'description', 'price', 'discount_price', 'images'
+            'description', 'price', 'discount_price', 'images',
+            'average_rating', 'reviews_count', 'attributes'
         ]
+
+    def get_attributes(self, obj):
+        return {
+            av.attribute_value.attribute.name: av.attribute_value.value 
+            for av in obj.attributes.select_related('attribute_value__attribute')
+        }
 
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)

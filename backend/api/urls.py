@@ -33,6 +33,8 @@ from .views.cms import HeroSlideViewSet, CompanyInfoViewSet, AboutFeatureViewSet
 from .views.auth_views import ChangePasswordView
 
 
+from .views.review import ReviewViewSet
+
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='products') # Read Only
 router.register(r'productscrud', ProductOperation, basename='productscrud') # Full CRUD
@@ -50,6 +52,7 @@ router.register(r'contact_messages', ContactMessageViewSet, basename='contact_me
 router.register(r'hero', HeroSlideViewSet, basename='hero')
 router.register(r'company_info', CompanyInfoViewSet, basename='company_info')
 router.register(r'about_features', AboutFeatureViewSet, basename='about_features')
+router.register(r'reviews', ReviewViewSet, basename='reviews')
 
 urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),

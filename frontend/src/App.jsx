@@ -33,6 +33,8 @@ import { Navigate } from 'react-router-dom';
 
 import { ToastProvider } from './context/ToastContext';
 
+import ScrollToTop from './components/ScrollToTop';
+
 function App() {
   console.log("App component rendering");
   return (
@@ -40,6 +42,7 @@ function App() {
       <ToastProvider>
         <AuthProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<ClientLayout />}>
                 {/* Client Routes */}
@@ -72,7 +75,7 @@ function App() {
                 <Route path="orders" element={<Orders />} />
                 <Route path="users" element={<Users />} />
                 <Route path="blogs" element={<AdminBlogs />} />
-                <Route path="team" element={<AdminTeam />} />
+                {/* <Route path="team" element={<AdminTeam />} /> Moved to Settings */}
                 <Route path="testimonials" element={<AdminTestimonials />} />
                 <Route path="ads" element={<AdminAds />} />
                 <Route path="ads" element={<AdminAds />} />

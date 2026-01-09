@@ -10,7 +10,7 @@ const initialItems = [
         title: "The Emerald Grass",
         category: "Artificial Grass, Outdoor",
         description:
-            "Low-maintenance, year-round green space with a lush natural look. Durable & weather-resistant.",
+            "Experience the lush, vibrant beauty of a perfectly manicured lawn all year round with 'The Emerald Grass'. Designed to mimic the natural texture and color variation of real grass, this premium artificial turf is the ultimate solution for a low-maintenance, high-impact outdoor space.",
         image: "https://c.animaapp.com/ypxcOp9T/img/image-8.svg",
     },
     {
@@ -18,7 +18,7 @@ const initialItems = [
         title: "The Kensington Loop",
         category: "Loop Pile, High-Traffic",
         description:
-            "Durable and elegant. Tightly woven loop pile resists wear—great for hallways and living rooms.",
+            "Bring understated elegance and exceptional durability to your home with 'The Kensington Loop'. This tightly woven loop pile carpet is engineered to withstand the hustle and bustle of daily life.",
         image: "https://c.animaapp.com/ypxcOp9T/img/image-9.svg",
     },
     {
@@ -26,7 +26,7 @@ const initialItems = [
         title: "The Mayfair Saxony",
         category: "Cut Pile, Luxury",
         description:
-            "Deep, plush Saxony comfort—perfect for bedrooms. Rich, luxurious colors.",
+            "Indulge in pure luxury with 'The Mayfair Saxony', a carpet that redefines comfort. Sink your toes into the deep, plush pile that offers a sensation of warmth and softness unmatched by standard carpets.",
         image: "https://c.animaapp.com/ypxcOp9T/img/image-10.svg",
     },
     {
@@ -34,7 +34,7 @@ const initialItems = [
         title: "The Hampshire Weave",
         category: "Wool, Natural Fibre",
         description:
-            "Classic wool softness, resilience, and insulation. Naturally stain-resistant; timeless look.",
+            "Classic wool softness, resilience, and insulation. Naturally stain-resistant; timeless look. Woven using traditional methods to ensure longevity and style in any setting.",
         image: "https://c.animaapp.com/ypxcOp9T/img/image-8.svg",
     },
     {
@@ -42,7 +42,7 @@ const initialItems = [
         title: "The Regent Flatweave",
         category: "Flatweave, Natural Fibre",
         description:
-            "Low-profile texture ideal for busy rooms; easy to clean and beautifully understated.",
+            "Low-profile texture ideal for busy rooms; easy to clean and beautifully understated. Its flat construction prevents dirt accumulation, making it a hygienic choice for dining areas.",
         image: "https://c.animaapp.com/ypxcOp9T/img/image-9.svg",
     },
     {
@@ -50,8 +50,24 @@ const initialItems = [
         title: "The Camden Pattern",
         category: "Pattern, Statement",
         description:
-            "Bold geometric pattern that pulls a room together and adds visual interest.",
+            "Bold geometric pattern that pulls a room together and adds visual interest. Uses colorfast dyes to ensure the vibrant design remains striking for years to come.",
         image: "https://c.animaapp.com/ypxcOp9T/img/image-10.svg",
+    },
+    {
+        id: 7,
+        title: "Luxury King Bed",
+        category: "Beds, Luxury",
+        description:
+            "Transform your bedroom into a five-star retreat with our 'Luxury King Bed'. This masterfully crafted bed frame combines robust engineering with exquisite design.",
+        image: "https://placehold.co/600x400?text=Luxury+Bed",
+    },
+    {
+        id: 8,
+        title: "Persian Style Rug",
+        category: "Rugs, Traditional",
+        description:
+            "Add a timeless masterpiece to your floor with our 'Persian Style Rug'. Inspired by centuries-old traditional designs, this rug features intricate floral motifs.",
+        image: "https://placehold.co/600x400?text=Persian+Rug",
     },
 ];
 
