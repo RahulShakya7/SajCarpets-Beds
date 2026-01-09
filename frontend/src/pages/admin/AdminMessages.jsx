@@ -2,7 +2,10 @@ import { Trash, EnvelopeOpen } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
+import { useToast } from "../../context/ToastContext";
+
 export default function AdminMessages() {
+    const { addToast, removeToast } = useToast();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -12,6 +15,7 @@ export default function AdminMessages() {
             setMessages(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch messages", "error");
         } finally {
             setLoading(false);
         }
@@ -23,11 +27,16 @@ export default function AdminMessages() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Deleting message...", "loading", false);
         try {
             await api.delete(`contact_messages/${id}/`);
             setMessages(prev => prev.filter(m => m.id !== id));
+            removeToast(toastId);
+            addToast("Message deleted", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to delete message", "error");
         }
     };
 

@@ -3,8 +3,10 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useToast } from "../../context/ToastContext";
 
 export default function AdminTeam() {
+    const { addToast, removeToast } = useToast();
     const [team, setTeam] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -18,6 +20,7 @@ export default function AdminTeam() {
             setTeam(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch team members", "error");
         } finally {
             setLoading(false);
         }
@@ -29,11 +32,16 @@ export default function AdminTeam() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Removing team member...", "loading", false);
         try {
             await api.delete(`team/${id}/`);
             setTeam(prev => prev.filter(t => t.id !== id));
+            removeToast(toastId);
+            addToast("Team member removed", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to remove team member", "error");
         }
     };
 
@@ -59,6 +67,8 @@ export default function AdminTeam() {
             // Force multipart header for this request
             const config = { headers: { "Content-Type": "multipart/form-data" } };
 
+            const toastId = addToast("Saving team member...", "loading", false);
+
             if (editId) {
                 await api.patch(`team/${editId}/`, data, config);
             } else {
@@ -68,9 +78,13 @@ export default function AdminTeam() {
             setEditId(null);
             setFormData({ name: "", role: "", bio: "", image: null });
             fetchTeam();
+            removeToast(toastId);
+            addToast("Team member saved successfully", "success");
         } catch (err) {
             console.error(err);
             setError("Failed to save team member. Please check your inputs.");
+            removeToast(toastId);
+            addToast("Failed to save team member", "error");
         }
     };
 

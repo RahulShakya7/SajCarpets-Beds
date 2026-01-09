@@ -3,8 +3,10 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useToast } from "../../context/ToastContext";
 
 export default function Products() {
+    const { addToast, removeToast } = useToast();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -31,6 +33,7 @@ export default function Products() {
             setProducts(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch products", "error");
         } finally {
             setLoading(false);
         }
@@ -52,11 +55,16 @@ export default function Products() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Deleting product...", "loading", false);
         try {
             await api.delete(`productscrud/${id}/`);
             setProducts(prev => prev.filter(p => p.id !== id));
+            removeToast(toastId);
+            addToast("Product deleted", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to delete product", "error");
         }
     };
 
@@ -108,6 +116,8 @@ export default function Products() {
 
         try {
             const config = { headers: { "Content-Type": "multipart/form-data" } };
+            const toastId = addToast("Saving product...", "loading", false);
+
             if (editId) {
                 await api.patch(`productscrud/${editId}/`, data, config);
             } else {
@@ -117,9 +127,13 @@ export default function Products() {
             setEditId(null);
             resetForm();
             fetchProducts();
+            removeToast(toastId);
+            addToast("Product saved successfully", "success");
         } catch (err) {
             console.error(err);
             setError("Failed to save product. Check inputs (slug must be unique).");
+            removeToast(toastId);
+            addToast("Failed to save product", "error");
         }
     };
 

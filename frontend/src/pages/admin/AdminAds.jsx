@@ -3,8 +3,10 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useToast } from "../../context/ToastContext";
 
 export default function AdminAds() {
+    const { addToast, removeToast } = useToast();
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -18,6 +20,7 @@ export default function AdminAds() {
             setAds(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch ads", "error");
         } finally {
             setLoading(false);
         }
@@ -29,11 +32,16 @@ export default function AdminAds() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Deleting ad...", "loading", false);
         try {
             await api.delete(`ads/${id}/`);
             setAds(prev => prev.filter(a => a.id !== id));
+            removeToast(toastId);
+            addToast("Ad deleted successfully", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to delete ad", "error");
         }
     };
 
@@ -61,6 +69,8 @@ export default function AdminAds() {
             // Force multipart header for this request
             const config = { headers: { "Content-Type": "multipart/form-data" } };
 
+            const toastId = addToast("Saving ad...", "loading", false);
+
             if (editId) {
                 await api.patch(`ads/${editId}/`, data, config);
             } else {
@@ -70,9 +80,13 @@ export default function AdminAds() {
             setEditId(null);
             setFormData({ title: "", description: "", icon_name: "Smiley", button_text: "", is_top_banner: false, image: null });
             fetchAds();
+            removeToast(toastId);
+            addToast("Ad saved successfully", "success");
         } catch (err) {
             console.error(err);
             setError("Failed to save advertisement. Please check your inputs.");
+            removeToast(toastId);
+            addToast("Failed to save ad", "error");
         }
     };
 

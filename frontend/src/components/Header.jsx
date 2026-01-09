@@ -25,7 +25,7 @@ const Header = () => {
     return (
         <header className="sticky top-0 left-0 z-50 w-full bg-white dark:bg-gray-900 shadow-md transition-colors duration-300">
             <SearchPopup isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-            <div className="flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-[300px] h-24">
+            <div className="flex items-center justify-between px-4 sm:px-8 md:px-12 lg:px-24 xl:px-48 2xl:px-[300px] h-24">
                 {/* Logo */}
                 <Link to="/" className="flex items-center">
                     <img
@@ -36,7 +36,7 @@ const Header = () => {
                 </Link>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex items-center gap-10">
+                <nav className="hidden lg:flex items-center gap-10">
                     {navLinks.map(({ label, href }) => (
                         <Link
                             key={label}
@@ -52,8 +52,8 @@ const Header = () => {
                 </nav>
 
                 {/* Desktop Icons */}
-                <div className="hidden md:flex items-center gap-4">
-                    <div className="hidden md:flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4">
+                    <div className="hidden lg:flex items-center gap-4">
                         <button onClick={() => setSearchOpen(true)}>
                             <MagnifyingGlass
                                 size={32}
@@ -99,7 +99,7 @@ const Header = () => {
                 </div>
 
                 {/* Mobile Hamburger + ThemeToggle */}
-                <div className="md:hidden flex items-center gap-2">
+                <div className="lg:hidden flex items-center gap-2">
                     {/* ThemeToggle always visible */}
                     <ThemeToggle />
                     <button onClick={() => setMenuOpen(!menuOpen)}>

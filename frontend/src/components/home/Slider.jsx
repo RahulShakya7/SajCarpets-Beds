@@ -46,7 +46,7 @@ const Slider = () => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 1.2, ease: "easeInOut" }}
-                                className="absolute inset-0 w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-16 lg:px-[300px] gap-12 py-12 bg-cover bg-center"
+                                className="absolute inset-0 w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-24 xl:px-48 2xl:px-[300px] gap-12 py-12 bg-cover bg-center"
                                 style={{ backgroundImage: `url(${slide.image})` }}
                             >
                                 {/* Gradient Overlay */}

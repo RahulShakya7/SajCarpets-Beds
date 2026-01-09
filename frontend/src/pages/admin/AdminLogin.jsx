@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 export default function AdminLogin() {
@@ -9,18 +10,24 @@ export default function AdminLogin() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const { login } = useAuth();
+    const { addToast, removeToast } = useToast();
     const navigate = useNavigate();
     const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        const toastId = addToast("Logging in...", "loading", false);
 
         const res = await login(email, password);
         if (res.success) {
+            removeToast(toastId);
+            addToast("Welcome back, Admin!", "success");
             navigate("/admin/dashboard");
         } else {
             setError(res.error);
+            removeToast(toastId);
+            addToast(res.error || "Login failed", "error");
         }
     };
 

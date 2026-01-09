@@ -3,8 +3,10 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useToast } from "../../context/ToastContext";
 
 export default function AdminBlogs() {
+    const { addToast, removeToast } = useToast();
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -18,6 +20,7 @@ export default function AdminBlogs() {
             setBlogs(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch blogs", "error");
         } finally {
             setLoading(false);
         }
@@ -29,11 +32,16 @@ export default function AdminBlogs() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Deleting blog post...", "loading", false);
         try {
             await api.delete(`blogs/${id}/`);
             setBlogs(prev => prev.filter(b => b.id !== id));
+            removeToast(toastId);
+            addToast("Blog post deleted", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to delete blog post", "error");
         }
     };
 
@@ -60,6 +68,8 @@ export default function AdminBlogs() {
             // Force multipart header for this request
             const config = { headers: { "Content-Type": "multipart/form-data" } };
 
+            const toastId = addToast("Saving blog post...", "loading", false);
+
             if (editId) {
                 await api.patch(`blogs/${editId}/`, data, config);
             } else {
@@ -69,9 +79,13 @@ export default function AdminBlogs() {
             setEditId(null);
             setFormData({ title: "", content: "", author: "Saj Team", date: new Date().toISOString().split('T')[0], image: null });
             fetchBlogs();
+            removeToast(toastId);
+            addToast("Blog post saved successfully", "success");
         } catch (err) {
             console.error(err);
             setError("Failed to save blog post. Please check your inputs.");
+            removeToast(toastId);
+            addToast("Failed to save blog post", "error");
         }
     };
 

@@ -59,7 +59,7 @@ const Footer = () => {
     }, []);
 
     return (
-        <footer className="w-full bg-white dark:bg-gray-900 py-12 px-6 sm:px-8 md:px-12 lg:px-24 xl:px-32 2xl:px-[300px] transition-colors duration-300">
+        <footer className="w-full bg-white dark:bg-gray-900 py-12 px-4 sm:px-8 md:px-12 lg:px-24 xl:px-48 2xl:px-[300px] transition-colors duration-300">
             <div className="flex flex-col gap-12">
                 {/* Top Section */}
                 <div className="flex flex-col lg:flex-row justify-between gap-12">

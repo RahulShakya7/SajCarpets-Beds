@@ -3,8 +3,10 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useToast } from "../../context/ToastContext";
 
 export default function AdminCategories() {
+    const { addToast } = useToast();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -22,6 +24,7 @@ export default function AdminCategories() {
             setCategories(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch categories", "error");
         } finally {
             setLoading(false);
         }
@@ -33,12 +36,14 @@ export default function AdminCategories() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Deleting category...", "loading", false);
         try {
             await api.delete(`categoriescrud/${id}/`);
             setCategories(prev => prev.filter(c => c.id !== id));
+            addToast("Category deleted successfully", "success");
         } catch (err) {
             console.error(err);
-            alert("Failed to delete. It might be linked to products.");
+            addToast("Failed to delete. It might be linked to products.", "error");
         }
     };
 

@@ -39,7 +39,7 @@ export default function AdminSettings() {
 }
 
 function HeroSettings() {
-    const { addToast } = useToast();
+    const { addToast, removeToast } = useToast();
     const [slides, setSlides] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,10 +84,13 @@ function HeroSettings() {
             setIsModalOpen(false);
             setEditingSlide(null);
             setFormData({ title: "", subtitle: "", description: "", image: null, order: 0, is_active: true });
+            setFormData({ title: "", subtitle: "", description: "", image: null, order: 0, is_active: true });
             fetchSlides();
+            removeToast(toastId);
             addToast("Slide saved successfully!", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
             addToast("Failed to save slide", "error");
         }
     };
@@ -98,8 +101,10 @@ function HeroSettings() {
         try {
             await api.delete(`hero/${id}/`);
             fetchSlides();
+            removeToast(toastId);
             addToast("Slide deleted", "success");
         } catch (err) {
+            removeToast(toastId);
             addToast("Failed to delete slide", "error");
         }
     };
@@ -189,7 +194,7 @@ function HeroSettings() {
 }
 
 function AboutFeaturesSettings() {
-    const { addToast } = useToast();
+    const { addToast, removeToast } = useToast();
     const [features, setFeatures] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -224,10 +229,13 @@ function AboutFeaturesSettings() {
             setIsModalOpen(false);
             setEditingFeature(null);
             setFormData({ title: "", description: "", icon_name: "", order: 0 });
+            setFormData({ title: "", description: "", icon_name: "", order: 0 });
             fetchFeatures();
+            removeToast(toastId);
             addToast("Feature saved successfully!", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
             addToast("Failed to save feature", "error");
         }
     };
@@ -238,8 +246,10 @@ function AboutFeaturesSettings() {
         try {
             await api.delete(`about_features/${id}/`);
             fetchFeatures();
+            removeToast(toastId);
             addToast("Feature deleted", "success");
         } catch (err) {
+            removeToast(toastId);
             addToast("Failed to delete feature", "error");
         }
     };
@@ -321,7 +331,7 @@ function AboutFeaturesSettings() {
 }
 
 function CompanySettings() {
-    const { addToast } = useToast();
+    const { addToast, removeToast } = useToast();
     const [data, setData] = useState({ name: "", email: "", phone: "", address: "", facebook_link: "", instagram_link: "", twitter_link: "", about_us_content: "", about_image: null });
     const [loading, setLoading] = useState(true);
     const [infoId, setInfoId] = useState(null);

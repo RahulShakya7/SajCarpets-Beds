@@ -2,24 +2,28 @@ import { useState } from "react";
 import Button from "../../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 
 export default function Login() {
     const [email, setEmail] = useState(""); // Using email as username per backend generally, but SimpleJWT uses 'username' field by default
     const [password, setPassword] = useState("");
     const { login } = useAuth();
+    const { addToast } = useToast();
     const navigate = useNavigate();
     const [error, setError] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        // Assuming backend actually expects 'username' but user might type email
-        // Or if User model uses email as username. Standard Django uses username.
+        const toastId = addToast("Logging in...", "loading", false);
+
         const res = await login(email, password);
         if (res.success) {
+            addToast("Login successful!", "success");
             navigate("/");
         } else {
             setError(res.error);
+            addToast(res.error || "Login failed", "error");
         }
     };
 

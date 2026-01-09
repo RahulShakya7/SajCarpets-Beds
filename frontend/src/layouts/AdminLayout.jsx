@@ -30,10 +30,18 @@ const AdminLayout = () => {
                 navigate("/admin/login");
             } else if (!user.is_staff) {
                 // Do not redirect immediately, show unauthorized message for debugging
-                console.log("User is not staff:", user);
+                // console.log("User is not staff:", user); 
             }
         }
     }, [user, loading, navigate]);
+
+    // Update Browser Title for Admin
+    useEffect(() => {
+        document.title = "SajAdmin";
+        return () => {
+            document.title = "SajCarpets";
+        };
+    }, []);
 
     if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
 

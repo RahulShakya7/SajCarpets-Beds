@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../services/api";
 import Button from "../components/Button";
+import { useToast } from "../context/ToastContext";
 import CountdownTimer from "../components/Countdown";
 import StarRating from "../components/StarRating";
 import ProductCard from "../components/shared/ProductCard";
 
 export default function ProductDetails() {
+    const { addToast } = useToast();
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -109,16 +111,25 @@ export default function ProductDetails() {
                                 />
                             </div>
 
-                            <Button className="bg-primary text-white px-6 py-3 rounded-lg text-xl font-open-sans font-bold uppercase hover:bg-opacity-90 transition-colors">
+                            <Button
+                                onClick={() => addToast(`Enquiry for ${quantity} item(s) sent!`, "success")}
+                                className="bg-primary text-white px-6 py-3 rounded-lg text-xl font-open-sans font-bold uppercase hover:bg-opacity-90 transition-colors"
+                            >
                                 Enquire Now
                             </Button>
                         </div>
 
                         <div className="flex gap-6 mb-6">
-                            <Button className="border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 px-6 py-3 rounded-lg text-base text-gray-400">
+                            <Button
+                                onClick={() => addToast("Added to Wishlist", "success")}
+                                className="border border-gray-300 dark:border-gray-600 bg-secondar-100 dark:bg-gray-800 px-6 py-3 rounded-lg text-base text-gray-400 hover:text-primary transition-colors"
+                            >
                                 Wishlist
                             </Button>
-                            <Button className="border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 px-6 py-3 rounded-lg text-base text-gray-400">
+                            <Button
+                                onClick={() => addToast("Added to Compare", "success")}
+                                className="border border-gray-300 dark:border-gray-600 bg-gray-400 dark:bg-gray-800 px-6 py-3 rounded-lg text-base text-gray-400 hover:text-primary transition-colors"
+                            >
                                 Compare
                             </Button>
                         </div>

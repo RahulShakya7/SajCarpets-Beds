@@ -3,8 +3,11 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useToast } from "../../context/ToastContext";
+
 
 export default function Users() {
+    const { addToast, removeToast } = useToast();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -25,6 +28,7 @@ export default function Users() {
             setUsers(res.data.results || res.data);
         } catch (err) {
             console.error(err);
+            addToast("Failed to fetch users", "error");
         } finally {
             setLoading(false);
         }
@@ -36,11 +40,16 @@ export default function Users() {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure?")) return;
+        const toastId = addToast("Deleting user...", "loading", false);
         try {
             await api.delete(`users/${id}/`);
             setUsers(prev => prev.filter(u => u.id !== id));
+            removeToast(toastId);
+            addToast("User deleted successfully", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to delete user", "error");
         }
     };
 
@@ -55,6 +64,8 @@ export default function Users() {
                 delete data.password;
             }
 
+            const toastId = addToast("Saving user...", "loading", false);
+
             if (editId) {
                 await api.patch(`users/${editId}/`, data);
             } else {
@@ -64,9 +75,14 @@ export default function Users() {
             setEditId(null);
             resetForm();
             fetchUsers();
+            removeToast(toastId);
+            addToast("User saved successfully", "success");
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.username?.[0] || "Failed to save user.");
+            const errMsg = err.response?.data?.username?.[0] || "Failed to save user.";
+            setError(errMsg);
+            removeToast(toastId);
+            addToast(errMsg, "error");
         }
     };
 

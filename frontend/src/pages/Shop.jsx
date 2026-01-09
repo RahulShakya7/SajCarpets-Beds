@@ -1,32 +1,58 @@
 import { List, SquaresFour } from "@phosphor-icons/react";
 import Helmet from "../components/shared/Helmet";
 import { useMemo, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import ProductCard from "../components/shared/ProductCard";
+import { useToast } from "../context/ToastContext";
 import api from "../services/api";
 
 export default function Shop() {
-    const [priceRange, setPriceRange] = useState([50, 1200]);
+    const { addToast } = useToast();
+    const [priceRange, setPriceRange] = useState([0, 2000]);
     const [selectedView, setSelectedView] = useState("grid");
     const [sortBy, setSortBy] = useState("");
     const [activeCategory, setActiveCategory] = useState(null);
     const [activeTag, setActiveTag] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    const categories = ["beds", "carpets", "rugs"]; // Removed "By Fabric" etc for now to match backend category slugs
-    const tags = ["Pattern", "Discount", "Price Drop", "Student Discount", "Deal"];
+    const location = useLocation();
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const params = new URLSearchParams(location.search);
+        const q = params.get("search");
+        if (q) setSearchQuery(q);
+    }, [location.search]);
+
+    const tags = ["Discount", "Deal"];
+
+    useEffect(() => {
+        const fetchCategories = async () => {
             try {
-                const res = await api.get('products/');
+                const res = await api.get('categories/');
+                setCategories(res.data.results || res.data);
+            } catch (err) {
+                console.error("Categories Load Error:", err);
+                // Don't block main UI for categories
+            }
+        };
+
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                // Fetch generic large amount to support client-side filtering
+                const res = await api.get('products/?page_size=100');
                 setProducts(res.data.results || res.data);
             } catch (err) {
-                console.error(err);
+                console.error("Products Load Error:", err);
+                addToast("Failed to load products", "error");
             } finally {
                 setLoading(false);
             }
         };
+
+        fetchCategories();
         fetchProducts();
     }, []);
 
@@ -34,37 +60,62 @@ export default function Shop() {
     const filteredProducts = useMemo(() => {
         let list = products.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
 
+        // Search Filter
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            list = list.filter(p =>
+                p.name.toLowerCase().includes(q) ||
+                (p.description && p.description.toLowerCase().includes(q))
+            );
+        }
+
+        // Category Filter
         if (activeCategory) {
-            // Backend categories might be objects or strings. Assuming we map to slug or name.
-            // For simple match:
             list = list.filter((p) => {
-                const catName = p.category_name || p.category; // Handle various serializations
-                return String(catName).toLowerCase() === activeCategory.toLowerCase();
+                const pCatName = p.category_name || p.category?.name || ""; // expanded safety
+                // If backend returns category ID, we might need to map. 
+                // Assuming backend serializer returns category name or object with name.
+                // Let's allow loose matching or check if product.category matches category.id if activeCategory is ID.
+                // But here activeCategory is the object or name strings from 'categories' state.
+
+                // If categories state contains objects:
+                if (typeof activeCategory === 'object') {
+                    return p.category === activeCategory.id || p.category?.id === activeCategory.id || p.category_name === activeCategory.name;
+                }
+                // fallback if strings
+                return String(pCatName).toLowerCase() === String(activeCategory).toLowerCase();
             });
         }
 
+        // Tag Filter (Mock/Discount logic)
         if (activeTag) {
-            // No tag field in backend currently, so this is just client-side filtering on mock tags if they existed
-            // For now, we skip or filter randomly for demo
-            // list = list.filter((p) => p.id % 3 === (tags.indexOf(activeTag) % 3));
+            if (activeTag === "Discount" || activeTag === "Deal") {
+                list = list.filter(p => p.discount_price && Number(p.discount_price) > 0);
+            }
         }
 
         switch (sortBy) {
             case "price-asc":
-                list.sort((a, b) => a.price - b.price);
+                list.sort((a, b) => Number(a.price) - Number(b.price));
                 break;
             case "price-desc":
-                list.sort((a, b) => b.price - a.price);
+                list.sort((a, b) => Number(b.price) - Number(a.price));
                 break;
             case "newest":
                 list.sort((a, b) => b.id - a.id);
+                break;
+            case "az":
+                list.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case "za":
+                list.sort((a, b) => b.name.localeCompare(a.name));
                 break;
             default:
                 break;
         }
 
         return list;
-    }, [products, priceRange, activeCategory, activeTag, sortBy]);
+    }, [products, priceRange, activeCategory, activeTag, sortBy, searchQuery]);
 
     // Price Slider Control
     const minPrice = 0;
@@ -78,34 +129,47 @@ export default function Shop() {
     return (
         <div className="w-full flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors">
             <Helmet title="Shop" breadcrumb="Home / Shop" />
-            <div className="min-h-screen bg-white dark:bg-gray-950 font-open-sans px-6 py-12 sm:px-12 lg:px-24 xl:px-48 transition-colors">
+            <div className="min-h-screen bg-white dark:bg-gray-950 font-open-sans px-4 py-12 sm:px-8 md:px-12 lg:px-24 xl:px-48 2xl:px-[300px] transition-colors">
 
                 {/* Filters and Sort Bar */}
                 <div className="flex flex-col gap-4 mb-12">
                     <div className="w-full h-px bg-gray-200 dark:bg-gray-700" />
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        {/* View Toggle */}
-                        <div className="flex items-center gap-6">
-                            <button onClick={() => setSelectedView("grid")} className={`transition ${selectedView === "grid" ? "opacity-100 text-primary" : "opacity-50 text-gray-500"}`}>
-                                <SquaresFour size={24} />
-                            </button>
-                            <button onClick={() => setSelectedView("list")} className={`transition ${selectedView === "list" ? "opacity-100 text-primary" : "opacity-50 text-gray-500"}`}>
-                                <List size={24} />
-                            </button>
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+
+                        {/* Search Input */}
+                        <div className="w-full md:w-auto flex-1 max-w-md">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-primary outline-none"
+                            />
                         </div>
 
-                        {/* Sorting */}
-                        <div className="flex items-center gap-4">
-                            <span className="text-base text-gray-700 dark:text-gray-300">Sort by:</span>
+                        <div className="flex items-center gap-4 self-end md:self-auto">
+                            {/* View Toggle */}
+                            <div className="flex items-center gap-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                                <button onClick={() => setSelectedView("grid")} className={`p-2 rounded ${selectedView === "grid" ? "bg-white dark:bg-gray-700 shadow text-primary" : "text-gray-500"}`}>
+                                    <SquaresFour size={20} />
+                                </button>
+                                <button onClick={() => setSelectedView("list")} className={`p-2 rounded ${selectedView === "list" ? "bg-white dark:bg-gray-700 shadow text-primary" : "text-gray-500"}`}>
+                                    <List size={20} />
+                                </button>
+                            </div>
+
+                            {/* Sorting */}
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
                                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
                             >
-                                <option value="">Select</option>
+                                <option value="">Sort By</option>
                                 <option value="price-asc">Price: Low to High</option>
                                 <option value="price-desc">Price: High to Low</option>
                                 <option value="newest">Newest</option>
+                                <option value="az">Name: A-Z</option>
+                                <option value="za">Name: Z-A</option>
                             </select>
                         </div>
                     </div>
@@ -114,33 +178,59 @@ export default function Shop() {
 
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Sidebar Filters */}
-                    <aside className="w-full lg:w-80 flex-shrink-0">
-                        <div className="mb-8">
-                            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Product Categories</h3>
-                            <div className="flex flex-col gap-2">
-                                {categories.map((category, index) => (
+                    <aside className="w-full lg:w-72 flex-shrink-0 space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white border-b pb-2 dark:border-gray-700">Categories</h3>
+                            <div className="flex flex-col gap-1">
+                                <button
+                                    onClick={() => setActiveCategory(null)}
+                                    className={`text-left px-3 py-2 rounded transition-colors ${!activeCategory ? "bg-primary-50 text-primary font-medium" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                                >
+                                    All Categories
+                                </button>
+                                {categories.map((category) => (
                                     <button
-                                        key={index}
+                                        key={category.id || category}
                                         onClick={() => setActiveCategory(activeCategory === category ? null : category)}
-                                        className={`text-left px-3 py-2 rounded capitalize ${activeCategory === category ? "bg-gray-100 dark:bg-gray-800 font-bold text-primary" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"}`}
+                                        className={`text-left px-3 py-2 rounded transition-colors ${activeCategory === category ? "bg-primary-50 text-primary font-medium" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
                                     >
-                                        {category}
+                                        {category.name || category}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
                         {/* Price Range */}
-                        <div className="mb-8">
-                            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Price Filter</h3>
-                            <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded mb-4">
-                                <div className="absolute h-2 bg-primary rounded" style={{ left: `${leftPercent}%`, width: `${rightPercent - leftPercent}%` }} />
+                        <div>
+                            <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white border-b pb-2 dark:border-gray-700">Price</h3>
+                            <div className="px-1">
+                                <div className="relative h-1 bg-gray-200 dark:bg-gray-700 rounded mb-6 mt-2">
+                                    <div className="absolute h-1 bg-primary rounded" style={{ left: `${leftPercent}%`, width: `${rightPercent - leftPercent}%` }} />
+                                    <input
+                                        type="range"
+                                        min={minPrice}
+                                        max={maxPrice}
+                                        value={priceRange[0]}
+                                        onChange={(e) => handleMinChange(Number(e.target.value))}
+                                        className="absolute w-full h-1 opacity-0 cursor-pointer z-10"
+                                    />
+                                    <input
+                                        type="range"
+                                        min={minPrice}
+                                        max={maxPrice}
+                                        value={priceRange[1]}
+                                        onChange={(e) => handleMaxChange(Number(e.target.value))}
+                                        className="absolute w-full h-1 opacity-0 cursor-pointer z-10"
+                                    />
+                                    {/* Thumbs visual hack or rely on browser default for now, standard range inputs stack weirdly without custom css. 
+                                        Creating a simple visual feedback below 
+                                    */}
+                                </div>
+                                <div className="flex justify-between items-center text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <div className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded border dark:border-gray-700">£{priceRange[0]}</div>
+                                    <div className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded border dark:border-gray-700">£{priceRange[1]}</div>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2 mb-4 text-gray-700 dark:text-gray-300">
-                                <span>£{priceRange[0]}</span> - <span>£{priceRange[1]}</span>
-                            </div>
-                            <input type="range" min={minPrice} max={maxPrice} value={priceRange[0]} onChange={(e) => handleMinChange(Number(e.target.value))} className="w-full" />
-                            <input type="range" min={minPrice} max={maxPrice} value={priceRange[1]} onChange={(e) => handleMaxChange(Number(e.target.value))} className="w-full" />
                         </div>
 
                         {/* Tags */}

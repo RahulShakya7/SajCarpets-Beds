@@ -1,15 +1,17 @@
 import { useState } from "react";
 import Button from "./Button";
+import { useToast } from "../context/ToastContext";
 
 const Newsletter = () => {
+    const { addToast } = useToast();
     const [email, setEmail] = useState("");
 
     const handleSubscribe = () => {
-        if (email) {
-            alert(`Subscribed with ${email}!`);
+        if (email && email.includes("@")) {
+            addToast(`Subscribed with ${email}!`, "success");
             setEmail(""); // Reset input
         } else {
-            alert("Please enter a valid email.");
+            addToast("Please enter a valid email.", "error");
         }
     };
 

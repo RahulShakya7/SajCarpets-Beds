@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../components/Button";
 import Helmet from "../components/shared/Helmet";
 import api from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 const InputField = ({ label, name, value, onChange, type = "text", placeholder = "" }) => (
     <div className="flex flex-col">
@@ -24,10 +25,9 @@ const InputField = ({ label, name, value, onChange, type = "text", placeholder =
 );
 
 export default function Contact() {
+    const { addToast } = useToast();
     const [formData, setFormData] = useState({ name: "", email: "", message: "" });
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(null);
-    const [error, setError] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -37,28 +37,24 @@ export default function Contact() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setSuccess(null);
-        setError(null);
+        const toastId = addToast("Sending message...", "loading", false);
 
-        // API call for contact
         try {
             await api.post("contact_messages/", formData);
-            // await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
-            setSuccess("Message sent successfully!");
+            addToast("Message sent successfully!", "success");
             setFormData({ name: "", email: "", message: "" });
         } catch (err) {
-            // Check if it's a validation error from backend
+            let errorMsg = "Something went wrong!";
             if (err.response && err.response.data) {
-                // Formatting Django REST framework errors (which are arrays/objects)
                 const errorData = err.response.data;
-                const errorMsg = Object.keys(errorData).map(key => {
+                errorMsg = Object.keys(errorData).map(key => {
                     const messages = Array.isArray(errorData[key]) ? errorData[key].join(", ") : errorData[key];
                     return `${key}: ${messages}`;
                 }).join(" | ");
-                setError(errorMsg);
             } else {
-                setError(err.message || "Something went wrong!");
+                errorMsg = err.message || errorMsg;
             }
+            addToast(errorMsg, "error");
         } finally {
             setLoading(false);
         }
@@ -74,10 +70,6 @@ export default function Contact() {
                     <h1 className="text-left text-2xl sm:text-3xl lg:text-[40px] font-bold leading-tight text-gray-900 dark:text-white mb-6 sm:mb-8">
                         Write Us
                     </h1>
-
-                    {/* Feedback Messages */}
-                    {success && <p className="text-green-600 text-left mb-4">{success}</p>}
-                    {error && <p className="text-red-600 text-left mb-4">{error}</p>}
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6 sm:gap-8">

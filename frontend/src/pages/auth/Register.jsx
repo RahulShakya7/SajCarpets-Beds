@@ -2,8 +2,10 @@ import { useState } from "react";
 import Button from "../../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
+import { useToast } from "../../context/ToastContext";
 
 export default function Register() {
+    const { addToast } = useToast();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -13,12 +15,15 @@ export default function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        const toastId = addToast("Creating account...", "loading", false);
         try {
             await api.post('register/', { username, email, password });
+            addToast("Registration successful! Please login.", "success");
             navigate("/auth/login");
         } catch (err) {
             setError("Registration failed. Try again.");
             console.error(err);
+            addToast(err.response?.data?.detail || "Registration failed. Try again.", "error");
         }
     };
 

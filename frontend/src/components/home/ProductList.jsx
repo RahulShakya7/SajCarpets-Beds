@@ -30,7 +30,7 @@ export default function ProductList() {
     }, [activeTab]);
 
     return (
-        <div className="bg-blue-50 dark:bg-gray-950 px-4 sm:px-8 md:px-16 lg:px-[200px] xl:px-[300px] py-12 md:py-[72px] transition-colors">
+        <div className="bg-blue-50 dark:bg-gray-950 px-4 sm:px-8 md:px-12 lg:px-24 xl:px-48 2xl:px-[300px] py-12 md:py-[72px] transition-colors">
             {/* Title */}
             <h2 className="text-3xl md:text-4xl text-black dark:text-white font-bold text-center mb-8">
                 Featured Products

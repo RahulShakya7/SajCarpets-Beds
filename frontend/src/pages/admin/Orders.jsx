@@ -3,7 +3,10 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
+import { useToast } from "../../context/ToastContext";
+
 export default function Orders() {
+    const { addToast, removeToast } = useToast();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -11,9 +14,9 @@ export default function Orders() {
         const fetchOrders = async () => {
             try {
                 const res = await api.get('orders/');
-                setOrders(res.data.results || res.data);
             } catch (err) {
                 console.error(err);
+                addToast("Failed to fetch orders", "error");
             } finally {
                 setLoading(false);
             }
@@ -24,11 +27,16 @@ export default function Orders() {
     // Simplified delete/archive
     const handleDelete = async (id) => {
         if (!window.confirm("Delete order?")) return;
+        const toastId = addToast("Deleting order...", "loading", false);
         try {
             await api.delete(`orders/${id}/`);
             setOrders(prev => prev.filter(o => o.id !== id));
+            removeToast(toastId);
+            addToast("Order deleted", "success");
         } catch (err) {
             console.error(err);
+            removeToast(toastId);
+            addToast("Failed to delete order", "error");
         }
     };
 
