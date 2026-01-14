@@ -35,19 +35,25 @@ class Testimonial(models.Model):
 class Advertisement(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    icon_name = models.CharField(max_length=50, help_text="Phosphor icon name e.g., PiggyBank")
     is_top_banner = models.BooleanField(default=False)
     button_text = models.CharField(max_length=50, blank=True)
-    image = models.ImageField(upload_to='ad_images/', blank=True, null=True)
+    image = models.ImageField(upload_to='banners/', blank=True, null=True)
 
     def __str__(self):
         return self.title
 
+from django.utils.text import slugify
+
 class InfoPage(models.Model):
-    slug = models.SlugField(unique=True) # e.g., 'about-us', 'contact-us'
+    slug = models.SlugField(unique=True, blank=True) # e.g., 'about-us', 'contact-us'
     title = models.CharField(max_length=255)
-    content = models.JSONField(help_text="Flexible JSON content for sections") 
+    content = models.TextField(help_text="Flexible JSON content for sections") 
     
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(InfoPage, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.title
 

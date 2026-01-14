@@ -3,14 +3,16 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 
 export default function AdminAds() {
     const { addToast, removeToast } = useToast();
+    const { confirm } = useConfirm();
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({ title: "", description: "", icon_name: "Smiley", button_text: "", is_top_banner: false, image: null });
+    const [formData, setFormData] = useState({ title: "", description: "", button_text: "", is_top_banner: false, image: null });
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState("");
 
@@ -31,7 +33,7 @@ export default function AdminAds() {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!await confirm("Are you sure you want to delete this advertisement?", "Delete Ad")) return;
         const toastId = addToast("Deleting ad...", "loading", false);
         try {
             await api.delete(`ads/${id}/`);
@@ -58,18 +60,21 @@ export default function AdminAds() {
         const data = new FormData();
         data.append("title", formData.title);
         data.append("description", formData.description);
-        data.append("icon_name", formData.icon_name);
         data.append("button_text", formData.button_text);
         data.append("is_top_banner", formData.is_top_banner);
         if (formData.image instanceof File) {
             data.append("image", formData.image);
         }
 
+        let toastId;
         try {
-            // Force multipart header for this request
-            const config = { headers: { "Content-Type": "multipart/form-data" } };
+            toastId = addToast("Saving ad...", "loading", false);
 
-            const toastId = addToast("Saving ad...", "loading", false);
+            const config = {
+                headers: {
+                    "Content-Type": undefined
+                }
+            };
 
             if (editId) {
                 await api.patch(`ads/${editId}/`, data, config);
@@ -78,14 +83,19 @@ export default function AdminAds() {
             }
             setIsEditing(false);
             setEditId(null);
-            setFormData({ title: "", description: "", icon_name: "Smiley", button_text: "", is_top_banner: false, image: null });
+            setFormData({ title: "", description: "", button_text: "", is_top_banner: false, image: null });
             fetchAds();
             removeToast(toastId);
             addToast("Ad saved successfully", "success");
         } catch (err) {
-            console.error(err);
-            setError("Failed to save advertisement. Please check your inputs.");
-            removeToast(toastId);
+            console.error("Ad Save Error:", err);
+            // const errorData = err.response?.data || {};
+            // alert(`Save Failed:\n${JSON.stringify(errorData, null, 2)}`);
+
+            const errorMsg = err.response?.data ? JSON.stringify(err.response.data) : "Failed to save advertisement.";
+            setError(errorMsg);
+
+            if (toastId) removeToast(toastId);
             addToast("Failed to save ad", "error");
         }
     };
@@ -94,7 +104,6 @@ export default function AdminAds() {
         setFormData({
             title: item.title,
             description: item.description,
-            icon_name: item.icon_name,
             button_text: item.button_text,
             is_top_banner: item.is_top_banner,
             image: null
@@ -108,7 +117,7 @@ export default function AdminAds() {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Advertisements</h1>
                 <Button size="small" className="gap-2" onClick={() => {
-                    setFormData({ title: "", description: "", icon_name: "Smiley", button_text: "", is_top_banner: false, image: null });
+                    setFormData({ title: "", description: "", button_text: "", is_top_banner: false, image: null });
                     setError("");
                     setEditId(null);
                     setIsEditing(true);
@@ -158,16 +167,7 @@ export default function AdminAds() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Icon Name (Phosphor)</label>
-                        <input
-                            type="text"
-                            placeholder="e.g. Smiley, Money"
-                            className="p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-primary outline-none transition-all"
-                            value={formData.icon_name}
-                            onChange={e => setFormData({ ...formData, icon_name: e.target.value })}
-                        />
-                    </div>
+
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Button Text</label>
                         <input

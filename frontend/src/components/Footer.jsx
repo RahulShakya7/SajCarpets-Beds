@@ -16,6 +16,7 @@ const defaultFooterData = {
             { label: "Shopping Guide", href: "/guide" },
             { label: "Delivery Information", href: "/delivery" },
             { label: "Privacy Policy", href: "/privacy" },
+            { label: "Terms & Conditions", href: "/terms" },
             { label: "Our Store", href: "/store" },
         ],
         openingHours: [
@@ -40,6 +41,10 @@ const Footer = () => {
                 const res = await api.get("company_info/");
                 if (res.data && res.data.length > 0) {
                     const info = res.data[0];
+                    const dynamicHours = info.opening_hours
+                        ? info.opening_hours.split('\n')
+                        : ["Mon to Fri - 9:00 AM to 6:00 PM", "Weekends - 10:00 AM to 2:00 PM"];
+
                     setFooterData(prev => ({
                         ...prev,
                         address: info.address || prev.address,
@@ -48,7 +53,13 @@ const Footer = () => {
                         facebook_link: info.facebook_link,
                         instagram_link: info.instagram_link,
                         twitter_link: info.twitter_link,
-                        // Could also sync opening hours if added to backend
+                        mapUrl: info.map_image || prev.mapUrl, // Use uploaded image if available
+                        externalMapLink: info.map_url, // For clicking
+                        links: {
+                            ...prev.links,
+                            openingHours: dynamicHours
+                        },
+                        paymentImage: info.payment_image || prev.paymentImage
                     }));
                 }
             } catch (err) {
@@ -130,7 +141,7 @@ const Footer = () => {
                                 Opening Hours
                             </h4>
                             {footerData.links.openingHours.map((time, idx) => (
-                                <p key={idx} className="text-black dark:text-gray-300 text-base sm:text-lg">
+                                <p key={idx} className="text-black dark:text-gray-300 text-base sm:text-lg whitespace-pre-line">
                                     {time}
                                 </p>
                             ))}
@@ -142,10 +153,16 @@ const Footer = () => {
                         <h4 className="font-semibold text-lg sm:text-xl text-black dark:text-white mb-4">
                             Where to Find Us
                         </h4>
-                        <div
-                            className="w-full h-52 sm:h-64 md:h-72 lg:h-80 bg-cover bg-center rounded-lg"
-                            style={{ backgroundImage: `url(${footerData.mapUrl})` }}
-                        />
+                        {footerData.externalMapLink ? (
+                            <a href={footerData.externalMapLink} target="_blank" rel="noopener noreferrer" className="block w-full h-52 sm:h-64 md:h-72 lg:h-80 bg-cover bg-center rounded-lg hover:opacity-90 transition-opacity" style={{ backgroundImage: `url(${footerData.mapUrl})` }}>
+                            </a>
+                        ) : (
+                            <div
+                                className="w-full h-52 sm:h-64 md:h-72 lg:h-80 bg-cover bg-center rounded-lg"
+                                style={{ backgroundImage: `url(${footerData.mapUrl})` }}
+                            />
+                        )}
+
                     </div>
                 </div>
 

@@ -150,10 +150,10 @@ export default function Shop() {
                         <div className="flex items-center gap-4 self-end md:self-auto">
                             {/* View Toggle */}
                             <div className="flex items-center gap-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-                                <button onClick={() => setSelectedView("grid")} className={`p-2 rounded ${selectedView === "grid" ? "bg-white dark:bg-gray-700 shadow text-primary" : "text-gray-500"}`}>
+                                <button onClick={() => setSelectedView("grid")} className={`p-2 rounded ${selectedView === "grid" ? "bg-white dark:bg-gray-700 shadow text-primary dark:text-red-400" : "text-gray-500"}`}>
                                     <SquaresFour size={20} />
                                 </button>
-                                <button onClick={() => setSelectedView("list")} className={`p-2 rounded ${selectedView === "list" ? "bg-white dark:bg-gray-700 shadow text-primary" : "text-gray-500"}`}>
+                                <button onClick={() => setSelectedView("list")} className={`p-2 rounded ${selectedView === "list" ? "bg-white dark:bg-gray-700 shadow text-primary dark:text-red-400" : "text-gray-500"}`}>
                                     <List size={20} />
                                 </button>
                             </div>
@@ -184,7 +184,7 @@ export default function Shop() {
                             <div className="flex flex-col gap-1">
                                 <button
                                     onClick={() => setActiveCategory(null)}
-                                    className={`text-left px-3 py-2 rounded transition-colors ${!activeCategory ? "bg-primary-50 text-primary font-medium" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                                    className={`text-left px-3 py-2 rounded transition-colors ${!activeCategory ? "bg-primary-50 text-primary font-medium dark:bg-primary/10 dark:text-red-400" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
                                 >
                                     All Categories
                                 </button>
@@ -192,7 +192,7 @@ export default function Shop() {
                                     <button
                                         key={category.id || category}
                                         onClick={() => setActiveCategory(activeCategory === category ? null : category)}
-                                        className={`text-left px-3 py-2 rounded transition-colors ${activeCategory === category ? "bg-primary-50 text-primary font-medium" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                                        className={`text-left px-3 py-2 rounded transition-colors ${activeCategory === category ? "bg-primary-50 text-primary font-medium dark:bg-primary/10 dark:text-red-400" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
                                     >
                                         {category.name || category}
                                     </button>
@@ -241,7 +241,7 @@ export default function Shop() {
                                     <button
                                         key={index}
                                         onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                                        className={`px-4 py-2 border rounded-lg text-sm ${activeTag === tag ? "border-primary text-primary" : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary hover:text-primary"
+                                        className={`px-4 py-2 border rounded-lg text-sm ${activeTag === tag ? "border-primary text-primary dark:text-red-400" : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary hover:text-primary dark:hover:text-red-400"
                                             }`}
                                     >
                                         {tag}

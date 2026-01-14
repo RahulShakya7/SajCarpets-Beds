@@ -3,10 +3,12 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 
 export default function AdminBlogs() {
     const { addToast, removeToast } = useToast();
+    const { confirm } = useConfirm();
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -31,7 +33,7 @@ export default function AdminBlogs() {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!await confirm("Are you sure you want to delete this blog post?", "Delete Blog")) return;
         const toastId = addToast("Deleting blog post...", "loading", false);
         try {
             await api.delete(`blogs/${id}/`);

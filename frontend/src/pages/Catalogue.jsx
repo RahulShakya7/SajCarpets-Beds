@@ -1,84 +1,35 @@
 import Helmet from "../components/shared/Helmet";
 import CatalogueCard from "../components/CatalogueCard";
-import { useMemo, useState } from "react";
-
-// Fallback data as API currently has no public catalogue endpoint (concept distinct from products?)
-// The reference project used local data.
-const initialItems = [
-    {
-        id: 1,
-        title: "The Emerald Grass",
-        category: "Artificial Grass, Outdoor",
-        description:
-            "Experience the lush, vibrant beauty of a perfectly manicured lawn all year round with 'The Emerald Grass'. Designed to mimic the natural texture and color variation of real grass, this premium artificial turf is the ultimate solution for a low-maintenance, high-impact outdoor space.",
-        image: "https://c.animaapp.com/ypxcOp9T/img/image-8.svg",
-    },
-    {
-        id: 2,
-        title: "The Kensington Loop",
-        category: "Loop Pile, High-Traffic",
-        description:
-            "Bring understated elegance and exceptional durability to your home with 'The Kensington Loop'. This tightly woven loop pile carpet is engineered to withstand the hustle and bustle of daily life.",
-        image: "https://c.animaapp.com/ypxcOp9T/img/image-9.svg",
-    },
-    {
-        id: 3,
-        title: "The Mayfair Saxony",
-        category: "Cut Pile, Luxury",
-        description:
-            "Indulge in pure luxury with 'The Mayfair Saxony', a carpet that redefines comfort. Sink your toes into the deep, plush pile that offers a sensation of warmth and softness unmatched by standard carpets.",
-        image: "https://c.animaapp.com/ypxcOp9T/img/image-10.svg",
-    },
-    {
-        id: 4,
-        title: "The Hampshire Weave",
-        category: "Wool, Natural Fibre",
-        description:
-            "Classic wool softness, resilience, and insulation. Naturally stain-resistant; timeless look. Woven using traditional methods to ensure longevity and style in any setting.",
-        image: "https://c.animaapp.com/ypxcOp9T/img/image-8.svg",
-    },
-    {
-        id: 5,
-        title: "The Regent Flatweave",
-        category: "Flatweave, Natural Fibre",
-        description:
-            "Low-profile texture ideal for busy rooms; easy to clean and beautifully understated. Its flat construction prevents dirt accumulation, making it a hygienic choice for dining areas.",
-        image: "https://c.animaapp.com/ypxcOp9T/img/image-9.svg",
-    },
-    {
-        id: 6,
-        title: "The Camden Pattern",
-        category: "Pattern, Statement",
-        description:
-            "Bold geometric pattern that pulls a room together and adds visual interest. Uses colorfast dyes to ensure the vibrant design remains striking for years to come.",
-        image: "https://c.animaapp.com/ypxcOp9T/img/image-10.svg",
-    },
-    {
-        id: 7,
-        title: "Luxury King Bed",
-        category: "Beds, Luxury",
-        description:
-            "Transform your bedroom into a five-star retreat with our 'Luxury King Bed'. This masterfully crafted bed frame combines robust engineering with exquisite design.",
-        image: "https://placehold.co/600x400?text=Luxury+Bed",
-    },
-    {
-        id: 8,
-        title: "Persian Style Rug",
-        category: "Rugs, Traditional",
-        description:
-            "Add a timeless masterpiece to your floor with our 'Persian Style Rug'. Inspired by centuries-old traditional designs, this rug features intricate floral motifs.",
-        image: "https://placehold.co/600x400?text=Persian+Rug",
-    },
-];
+import { useMemo, useState, useEffect } from "react";
+import api from "../services/api";
+import { X } from "@phosphor-icons/react";
+import Button from "../components/Button";
 
 export default function Catalogue() {
     const [q, setQ] = useState("");
     const [cat, setCat] = useState("all");
     const [sortBy, setSortBy] = useState("");
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    useEffect(() => {
+        const fetchCatalogue = async () => {
+            try {
+                const res = await api.get("catalogue/");
+                setItems(res.data.results || res.data);
+            } catch (err) {
+                console.error("Failed to fetch catalogue", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCatalogue();
+    }, []);
 
     const allCategories = useMemo(() => {
         const set = new Set();
-        initialItems.forEach((it) => {
+        items.forEach((it) => {
             (it.category || "")
                 .split(",")
                 .map((s) => s.trim())
@@ -86,10 +37,10 @@ export default function Catalogue() {
                 .forEach((c) => set.add(c));
         });
         return ["all", ...Array.from(set)];
-    }, []);
+    }, [items]);
 
     const filtered = useMemo(() => {
-        let list = initialItems.slice();
+        let list = items.slice();
 
         if (q.trim()) {
             const needle = q.toLowerCase();
@@ -113,7 +64,7 @@ export default function Catalogue() {
         if (sortBy === "za") list.sort((a, b) => b.title.localeCompare(a.title));
 
         return list;
-    }, [q, cat, sortBy]);
+    }, [q, cat, sortBy, items]);
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
@@ -125,11 +76,11 @@ export default function Catalogue() {
                             Product Catalogue
                         </h1>
                         <span className="font-open-sans text-2xl sm:text-3xl lg:text-[31px] leading-[120%] text-[#c5c5c5]">
-                            ({initialItems.length} {initialItems.length === 1 ? "Product" : "Products"})
+                            ({items.length} {items.length === 1 ? "Product" : "Products"})
                         </span>
                     </div>
                     <p className="mt-4 text-[#444] dark:text-gray-300 text-lg sm:text-xl leading-[132%]">
-                        Explore durable loop piles, plush Saxonies, natural wool weaves, and bold patterned rugs.
+                        Explore our exclusive collection of beds, carpets, and accessories.
                     </p>
                 </header>
 
@@ -182,14 +133,22 @@ export default function Catalogue() {
 
                     {/* Grid */}
                     <div className="grid gap-6 md:gap-8 grid-cols-1">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                            {filtered.map((item) => (
-                                <CatalogueCard key={item.id} item={item} />
-                            ))}
-                        </div>
+                        {loading ? (
+                            <div className="text-center py-20 text-gray-500">Loading catalogue...</div>
+                        ) : (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                                {filtered.map((item) => (
+                                    <CatalogueCard
+                                        key={item.id}
+                                        item={item}
+                                        onViewDetails={setSelectedItem}
+                                    />
+                                ))}
+                            </div>
+                        )}
 
                         {/* Empty state */}
-                        {filtered.length === 0 && (
+                        {!loading && filtered.length === 0 && (
                             <div className="text-center py-12 border border-dashed border-gray-300 rounded-xl">
                                 <p className="text-gray-700 dark:text-gray-400">No items match your filters.</p>
                             </div>
@@ -197,6 +156,65 @@ export default function Catalogue() {
                     </div>
                 </div>
             </div>
+
+            {/* Modal */}
+            {selectedItem && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-scale-in">
+
+                        {/* Modal Header (Image handled in body for responsive) */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setSelectedItem(null)}
+                                className="absolute top-4 right-4 z-10 p-2 bg-white/80 dark:bg-black/50 hover:bg-white dark:hover:bg-black rounded-full shadow-lg transition-all"
+                            >
+                                <X size={24} className="text-gray-800 dark:text-white" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="overflow-y-auto overflow-x-hidden flex-1 flex flex-col">
+                            {/* Image Section */}
+                            <div className="w-full h-64 md:h-96 relative bg-gray-100 dark:bg-gray-900 flex-shrink-0">
+                                <img
+                                    src={selectedItem.image}
+                                    alt={selectedItem.title}
+                                    className="w-full h-full object-cover absolute inset-0"
+                                />
+                            </div>
+
+                            {/* Content Section */}
+                            <div className="w-full p-6 md:p-10 flex flex-col gap-6">
+                                <div>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {(selectedItem.category || "").split(",").map(c => c.trim()).filter(Boolean).map((badge, idx) => (
+                                            <span key={idx} className="px-3 py-1 bg-primary-50 dark:bg-primary/10 text-primary dark:text-red-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                                                {badge}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                                        {selectedItem.title}
+                                    </h2>
+                                </div>
+
+                                <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                                    {selectedItem.description.split('\n').map((paragraph, idx) => (
+                                        <p key={idx} className="mb-4">{paragraph}</p>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 md:p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end bg-gray-50 dark:bg-gray-800/50">
+                            <Button onClick={() => setSelectedItem(null)} className="w-full md:w-auto">
+                                Close Details
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

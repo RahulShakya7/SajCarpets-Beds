@@ -3,10 +3,12 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 
 export default function AdminTestimonials() {
     const { addToast, removeToast } = useToast();
+    const { confirm } = useConfirm();
     const [testimonials, setTestimonials] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -31,7 +33,7 @@ export default function AdminTestimonials() {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!await confirm("Are you sure you want to delete this testimonial?", "Delete Testimonial")) return;
         const toastId = addToast("Deleting testimonial...", "loading", false);
         try {
             await api.delete(`testimonials/${id}/`);

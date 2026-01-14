@@ -29,11 +29,13 @@ from .views.content_views import (
     AdvertisementViewSet, InfoPageViewSet, ContactMessageViewSet
 )
 from .views.dashboard import DashboardStatsView
-from .views.cms import HeroSlideViewSet, CompanyInfoViewSet, AboutFeatureViewSet
+from .views.cms import HeroSlideViewSet, CompanyInfoViewSet, AboutFeatureViewSet, SellingPointViewSet, InfoPageViewSet
 from .views.auth_views import ChangePasswordView
+from .views.media_view import MediaGalleryView
 
 
-from .views.review import ReviewViewSet
+from api.views.review import ReviewViewSet
+from api.views.catalogue import CatalogueItemViewSet
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='products') # Read Only
@@ -47,12 +49,14 @@ router.register(r'blogs', BlogViewSet, basename='blog')
 router.register(r'team', TeamMemberViewSet, basename='team')
 router.register(r'testimonials', TestimonialViewSet, basename='testimonial')
 router.register(r'ads', AdvertisementViewSet, basename='advertisement')
-router.register(r'info', InfoPageViewSet, basename='infopage')
+router.register(r'infopages', InfoPageViewSet, basename='infopage')
 router.register(r'contact_messages', ContactMessageViewSet, basename='contact_message')
 router.register(r'hero', HeroSlideViewSet, basename='hero')
 router.register(r'company_info', CompanyInfoViewSet, basename='company_info')
 router.register(r'about_features', AboutFeatureViewSet, basename='about_features')
+router.register(r'selling_points', SellingPointViewSet, basename='selling_points')
 router.register(r'reviews', ReviewViewSet, basename='reviews')
+router.register(r'catalogue', CatalogueItemViewSet, basename='catalogue')
 
 urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -60,5 +64,6 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('media/gallery/', MediaGalleryView.as_view(), name='media-gallery'),
 ]
 urlpatterns += router.urls

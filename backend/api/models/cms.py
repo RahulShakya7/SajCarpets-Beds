@@ -25,7 +25,14 @@ class CompanyInfo(models.Model):
     email = models.EmailField(blank=True)
     facebook_link = models.URLField(blank=True)
     instagram_link = models.URLField(blank=True)
+    instagram_link = models.URLField(blank=True)
     twitter_link = models.URLField(blank=True)
+    
+    # New Footer/Map Fields
+    map_image = models.ImageField(upload_to='company_assets/', blank=True, null=True, help_text="Fallback image if interactive map is not used")
+    map_url = models.URLField(blank=True, help_text="Link to Google Maps or similar")
+    opening_hours = models.TextField(blank=True, help_text="Line separated opening hours")
+    payment_image = models.ImageField(upload_to='company_assets/', blank=True, null=True, help_text="Payment methods icons image")
     
     def __str__(self):
         return f"{self.name} Info"
@@ -46,5 +53,20 @@ class AboutFeature(models.Model):
     class Meta:
         ordering = ['order', 'created_at']
 
+
     def __str__(self):
         return self.title
+
+class SellingPoint(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    icon_name = models.CharField(max_length=50, help_text="Phosphor Icon name (e.g., Package, Money)")
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return self.title
+

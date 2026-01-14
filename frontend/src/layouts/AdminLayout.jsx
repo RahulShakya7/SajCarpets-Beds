@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "../components/ThemeToggle";
-import { House, Users, Package, Tag, ShoppingCart, Newspaper, UsersThree, ChatText, Megaphone, EnvelopeSimple, Gear, SignOut, User, List } from "@phosphor-icons/react";
+import { House, Users, Package, Tag, ShoppingCart, Newspaper, UsersThree, ChatText, Megaphone, EnvelopeSimple, Gear, SignOut, User, List, Image } from "@phosphor-icons/react";
 
 const navItems = [
     { title: "Dashboard", path: "/admin/dashboard", icon: <House size={24} /> },
@@ -13,6 +13,7 @@ const navItems = [
     { title: "Testimonials", path: "/admin/testimonials", icon: <ChatText size={24} /> },
     { title: "Blogs", path: "/admin/blogs", icon: <Newspaper size={24} /> },
     { title: "Ads", path: "/admin/ads", icon: <Megaphone size={24} /> },
+    { title: "Media", path: "/admin/media", icon: <Image size={24} /> },
     { title: "Messages", path: "/admin/messages", icon: <EnvelopeSimple size={24} /> },
     { title: "Settings", path: "/admin/settings", icon: <Gear size={24} /> },
     { title: "Profile", path: "/admin/profile", icon: <User size={24} /> },

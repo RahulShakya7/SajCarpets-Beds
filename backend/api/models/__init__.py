@@ -3,5 +3,6 @@ from .category import Category
 from .order import Order, OrderItem
 from .customer import Customer
 from .content import Blog, TeamMember, Testimonial, Advertisement, InfoPage, ContactMessage
-from .cms import HeroSlide, CompanyInfo
+from .cms import HeroSlide, CompanyInfo, SellingPoint
 from .review import Review
+from .catalogue import CatalogueItem

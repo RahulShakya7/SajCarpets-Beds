@@ -3,10 +3,12 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
+import { useConfirm } from "../../context/ConfirmContext";
 import { useToast } from "../../context/ToastContext";
 
 export default function Orders() {
     const { addToast, removeToast } = useToast();
+    const { confirm } = useConfirm();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -26,7 +28,7 @@ export default function Orders() {
 
     // Simplified delete/archive
     const handleDelete = async (id) => {
-        if (!window.confirm("Delete order?")) return;
+        if (!await confirm("Are you sure you want to delete this order?", "Delete Order")) return;
         const toastId = addToast("Deleting order...", "loading", false);
         try {
             await api.delete(`orders/${id}/`);

@@ -22,4 +22,26 @@ api.interceptors.request.use(
     }
 );
 
+api.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            // Token expired or invalid
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            // Optional: Redirect to login if not already there
+            if (!window.location.pathname.includes('/login')) {
+                if (window.location.pathname.startsWith('/admin')) {
+                    window.location.href = '/admin/login';
+                } else {
+                    window.location.href = '/auth/login';
+                }
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;

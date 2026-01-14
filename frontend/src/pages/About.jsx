@@ -1,9 +1,10 @@
+
 import { useEffect, useState } from "react";
 import IntroSection from "../components/IntroSection";
 import TeamMemberCard from "../components/TeamMemberCard";
 import Testimonials from "../components/home/Testimonials";
 import { PiggyBank, SealCheck, Smiley, Money, ArrowUUpLeft, Package } from "@phosphor-icons/react";
-import Advertisements, { AdvertisementCards } from "../components/home/Advertisements";
+import Advertisements from "../components/home/Advertisements";
 import Helmet from "../components/shared/Helmet";
 import api from "../services/api";
 
@@ -83,7 +84,20 @@ export default function About() {
                     <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white py-8">
                         Why Choose Us?
                     </h2>
-                    <AdvertisementCards data={featuresData} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {featuresData.map((feature, idx) => {
+                            const Icon = feature.icon;
+                            return (
+                                <div key={idx} className="flex flex-col items-center gap-4 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                                    <div className="w-16 h-16 bg-primary-100 text-primary-600 dark:bg-primary/20 dark:text-red-400 rounded-full flex items-center justify-center">
+                                        <Icon size={32} weight="duotone" />
+                                    </div>
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
+                                    <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
                 <Advertisements />
             </section>

@@ -3,10 +3,13 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+
 import { useToast } from "../../context/ToastContext";
+import { useConfirm } from "../../context/ConfirmContext";
 
 export default function Products() {
     const { addToast, removeToast } = useToast();
+    const { confirm } = useConfirm();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -54,7 +57,7 @@ export default function Products() {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!await confirm("Are you sure you want to delete this product?", "Delete Product")) return;
         const toastId = addToast("Deleting product...", "loading", false);
         try {
             await api.delete(`productscrud/${id}/`);

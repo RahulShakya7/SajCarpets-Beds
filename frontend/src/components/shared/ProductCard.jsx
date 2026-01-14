@@ -34,7 +34,7 @@ const ProductCard = ({ product }) => {
 
                 {/* Price section */}
                 <div className="mt-auto pt-2 flex items-baseline gap-3">
-                    <p className="text-3xl font-bold text-primary">£{mainPrice}</p>
+                    <p className="text-3xl font-bold text-primary dark:text-red-400">£{mainPrice}</p>
                     {crossedPrice && (
                         <p className="text-lg text-gray-500 line-through">£{crossedPrice}</p>
                     )}

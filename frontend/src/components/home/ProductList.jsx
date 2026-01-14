@@ -42,7 +42,7 @@ export default function ProductList() {
                     <div key={tab} className="flex items-center">
                         <button
                             onClick={() => setActiveTab(tab)}
-                            className={`uppercase text-xl transition ${activeTab === tab ? "text-primary font-bold" : "text-gray-400 dark:text-gray-500"
+                            className={`uppercase text-xl transition ${activeTab === tab ? "text-primary dark:text-red-400 font-bold" : "text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-red-400"
                                 }`}
                         >
                             {tab}

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function CatalogueCard({ item }) {
+export default function CatalogueCard({ item, onViewDetails }) {
     const badges = (item.category || "")
         .split(",")
         .map((s) => s.trim())
@@ -33,14 +33,14 @@ export default function CatalogueCard({ item }) {
                     </div>
                 </header>
 
-                <p className="font-open-sans text-[17px] sm:text-lg leading-[132%] text-black dark:text-gray-200">
+                <p className="font-open-sans text-[17px] sm:text-[17px] leading-[140%] text-black dark:text-gray-200 line-clamp-5 text-ellipsis overflow-hidden">
                     {item.description}
                 </p>
 
                 {/* CTA row */}
-                <div className="mt-2">
-                    <Link
-                        to={`/product/${item.id}`}
+                <div className="mt-auto pt-4">
+                    <button
+                        onClick={() => onViewDetails(item)}
                         className="inline-flex items-center gap-2 text-[#b23017] dark:text-primary font-semibold hover:underline"
                     >
                         View details
@@ -52,7 +52,7 @@ export default function CatalogueCard({ item }) {
                         >
                             <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
-                    </Link>
+                    </button>
                 </div>
             </div>
         </article>

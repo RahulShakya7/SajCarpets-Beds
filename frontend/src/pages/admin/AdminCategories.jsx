@@ -3,10 +3,13 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import Modal from "../../components/Modal";
+
 import { useToast } from "../../context/ToastContext";
+import { useConfirm } from "../../context/ConfirmContext";
 
 export default function AdminCategories() {
     const { addToast } = useToast();
+    const { confirm } = useConfirm();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +38,7 @@ export default function AdminCategories() {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!await confirm("Are you sure you want to delete this category?", "Delete Category")) return;
         const toastId = addToast("Deleting category...", "loading", false);
         try {
             await api.delete(`categoriescrud/${id}/`);

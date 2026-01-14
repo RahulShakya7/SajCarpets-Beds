@@ -134,6 +134,44 @@ export default function Contact() {
                     </form>
                 </div>
             </div>
-        </div>
+            {/* Map Section */}
+            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-12 mx-auto mb-16">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Find Us</h2>
+                <div className="w-full h-96 bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden shadow-md relative group">
+                    {/* Logic to show interactive map or image fallback, reusing logic similar to footer but bigger */}
+                    <MapDisplay />
+                </div>
+            </div>
+        </div >
     );
 }
+
+const MapDisplay = () => {
+    const [mapData, setMapData] = useState({ image: null, url: "" });
+
+    useState(() => {
+        const fetchMap = async () => {
+            try {
+                const res = await api.get("company_info/");
+                if (res.data && res.data.length > 0) {
+                    setMapData({ image: res.data[0].map_image, url: res.data[0].map_url });
+                }
+            } catch (e) { console.error(e); }
+        };
+        fetchMap();
+    }, []);
+
+    if (mapData.image) {
+        return (
+            <a href={mapData.url || "#"} target="_blank" rel="noreferrer" className="block w-full h-full">
+                <img src={mapData.image} alt="Location Map" className="w-full h-full object-cover" />
+            </a>
+        );
+    }
+
+    return (
+        <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-700 text-gray-500">
+            <p>Map Loading or Not Available</p>
+        </div>
+    );
+};

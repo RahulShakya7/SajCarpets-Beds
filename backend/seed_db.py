@@ -12,7 +12,7 @@ from api.models import (
     Attribute, AttributeValue, ProductAttributeValue,
     Blog, TeamMember, Testimonial, Advertisement, InfoPage
 )
-from api.models.cms import AboutFeature
+from api.models.cms import AboutFeature, SellingPoint
 from api.models.review import Review
 from django.contrib.auth import get_user_model
 
@@ -303,17 +303,6 @@ For many of our clients, the benefits far outweigh the downsides. It's truly a l
     for feat in about_features_data:
         AboutFeature.objects.get_or_create(title=feat['title'], defaults=feat)
 
-    # Top Banner
-    Advertisement.objects.get_or_create(
-        is_top_banner=True,
-        defaults={
-            "title": "Dream Bigger. Sleep Better.",
-            "description": "Your bedroom should be your sanctuary. Transform it into a haven of rest and relaxation.",
-            "button_text": "Check Out!",
-            "icon_name": "Star"
-        }
-    )
-
     # Info Pages
     info_pages = [
         {
@@ -357,5 +346,129 @@ For many of our clients, the benefits far outweigh the downsides. It's truly a l
                 Review.objects.create(product=product, user=reviewer, rating=rating, comment=comment)
             print(f"Added reviews for {product.name}")
 
+from api.models.catalogue import CatalogueItem
+
+def create_ads():
+    print("Creating Ads (Banners)...")
+    Advertisement.objects.all().delete()
+    
+    # Only keep the banners (e.g. Dream Bigger)
+    banners = [
+        {
+            "title": "Dream Bigger. Sleep Better.",
+            "description": "Experience the ultimate comfort with our new collection of luxury mattresses.",
+            "button_text": "Shop Beds",
+            "image": None,
+            "is_top_banner": True,
+        },
+         {
+            "title": "New Season, New Style",
+            "description": "Refresh your home with our latest carpet arrivals.",
+            "button_text": "View Carpets",
+            "image": None,
+            "is_top_banner": True,
+        }
+    ]
+
+    for ad_data in banners:
+        Advertisement.objects.create(**ad_data)
+    print("Ads (Banners) created.")
+
+def create_selling_points():
+    print("Creating Selling Points...")
+    SellingPoint.objects.all().delete()
+
+    points = [
+        {
+            "title": "Free Delivery",
+            "description": "We offer free delivery on all orders over £500. Fast and reliable service to your doorstep.",
+            "icon_name": "Package",
+            "order": 1
+        },
+        {
+            "title": "Order Return",
+            "description": "Not happy with your purchase? Return it within 30 days for a full refund. No questions asked.",
+            "icon_name": "ArrowUUpLeft",
+            "order": 2
+        },
+        {
+            "title": "Free Shipping",
+            "description": "Enjoy free shipping on selected items. Check our shipping policy for more details.",
+            "icon_name": "Money", 
+            "order": 3
+        }
+    ]
+
+    for sp in points:
+        SellingPoint.objects.create(**sp)
+    print("Selling Points created.")
+
+def create_catalogue():
+    print("Creating catalogue items...")
+    CatalogueItem.objects.all().delete()
+    
+    items = [
+        {
+            "title": "The Emerald Grass",
+            "category": "Artificial Grass, Outdoor",
+            "description": "Experience the lush, vibrant beauty of a perfectly manicured lawn all year round with 'The Emerald Grass'. Designed to mimic the natural texture and color variation of real grass, this premium artificial turf is the ultimate solution for a low-maintenance, high-impact outdoor space.\n\nCrafted with high-quality, UV-resistant fibers, 'The Emerald Grass' maintains its rich green hue even under the harshest sun, ensuring your garden looks fresh and inviting regardless of the season. Its advanced drainage system prevents water accumulation, making it pet-friendly and easy to clean, while the soft, cushioned feel underfoot provides a safe and comfortable play area for children.\n\nIdeal for patios, balconies, rooftops, or replacing natural lawns, this artificial grass eliminates the need for mowing, watering, and fertilizing. Say goodbye to muddy patches and relentless upkeep, and hello to a pristine, evergreen landscape that enhances the aesthetic appeal of your home. Whether hosting a summer barbecue or enjoying a quiet afternoon, 'The Emerald Grass' offers the perfect blend of functionality and style for modern outdoor living.",
+            "image": None 
+        },
+        {
+            "title": "The Kensington Loop",
+            "category": "Loop Pile, High-Traffic",
+            "description": "Bring understated elegance and exceptional durability to your home with 'The Kensington Loop'. This tightly woven loop pile carpet is engineered to withstand the hustle and bustle of daily life, making it an excellent choice for hallways, stairs, and living rooms where foot traffic is highest.\n\nThe unique loop construction not only adds a sophisticated texture to your floor but also offers superior resilience against crushing and matting. Available in a palette of neutral, earthy tones, 'The Kensington Loop' seamlessly integrates with various interior styles, from contemporary minimalist to rustic charm.\n\nBeyond its robustness, this carpet provides a layer of thermal insulation, helping to keep your home warm and energy-efficient. Its stain-resistant properties ensure that spills and accidents are easily managed, maintaining the carpet's pristine appearance for years. Choose 'The Kensington Loop' for a practical yet stylish flooring solution that doesn't compromise on comfort.",
+            "image": None
+        },
+        {
+            "title": "The Mayfair Saxony",
+            "category": "Cut Pile, Luxury",
+            "description": "Indulge in pure luxury with 'The Mayfair Saxony', a carpet that redefines comfort. Sink your toes into the deep, plush pile that offers a sensation of warmth and softness unmatched by standard carpets. Perfect for bedrooms and lounges, this carpet transforms any room into a cozy sanctuary.\n\nManufactured using premium-grade fibers, 'The Mayfair Saxony' boasts a rich, velvety finish that catches the light beautifully, adding a touch of opulence to your decor. Its dense weave provides excellent sound absorption, creating a quieter, more peaceful environment in your home.\n\nAvailable in a wide range of sophisticated colors, from deep jewel tones to soft pastels, you can find the perfect shade to complement your design vision. Despite its luxurious feel, 'The Mayfair Saxony' is designed for longevity, treated with stain protection to ensure it remains as stunning as the day it was installed. Elevate your living space with the unparalleled elegance and comfort of 'The Mayfair Saxony'.",
+            "image": None
+        },
+        {
+            "title": "The Hampshire Weave",
+            "category": "Wool, Natural Fibre",
+            "description": "Discover the timeless appeal of 'The Hampshire Weave', a carpet that celebrates the natural beauty and resilience of wool. Woven using traditional methods, this carpet features a distinctive texture that adds depth and character to any room, embodying a classic British style.\n\nWool is naturally insulating, flame-retardant, and resistant to dirt, making 'The Hampshire Weave' a safe and practical choice for family homes. Its breathable fibers help regulate humidity, contributing to a healthier indoor climate. The natural elasticity of wool means the carpet bounces back from furniture indentations, maintaining its structure over time.\n\nWith its subtle, organic patterns and warm, neutral shades, this carpet serves as a versatile foundation for both modern and traditional interiors. Committed to sustainability, 'The Hampshire Weave' is biodegradable and renewable, offering an eco-friendly flooring option without sacrificing quality or aesthetics. Invest in the enduring quality of natural wool with 'The Hampshire Weave'.",
+            "image": None
+        },
+        {
+            "title": "The Regent Flatweave",
+            "category": "Flatweave, Natural Fibre",
+            "description": "Low-profile texture ideal for busy rooms; easy to clean and beautifully understated. Its flat construction prevents dirt accumulation, making it a hygienic choice for dining areas.\n\n'The Regent Flatweave' combines modern practicality with sleek design. Its tight weave structure ensures that chairs slide easily over the surface, preventing snagging and wear common in other carpet types. This makes it particularly suitable for home offices and dining rooms.\n\nHighly durable and resistant to crushing, this flatweave carpet maintains its crisp responsiveness even in high-traffic zones. The collection features a range of contemporary geometric designs and solid colors, allowing you to make a bold statement or keep things simple. Easy to vacuum and maintain, 'The Regent Flatweave' offers a hassle-free flooring solution that keeps up with your dynamic lifestyle.",
+            "image": None
+        },
+        {
+            "title": "The Camden Pattern",
+            "category": "Pattern, Statement",
+            "description": "Bold geometric pattern that pulls a room together and adds visual interest. Uses colorfast dyes to ensure the vibrant design remains striking for years to come. 'The Camden Pattern' is for those who view their floor as a canvas.\n\nInspired by modern art and urban architecture, this collection features eye-catching motifs that can serve as the focal point of a room. Whether you prefer monochrome contrasts or vibrant bursts of color, there is a design to match your personality.\n\nConstructed from durable synthetic fibers, it is stain-resistant and bleach-cleanable, ensuring that the bold patterns stay bright and defined. Perfect for living areas, playrooms, or creative workspaces, 'The Camden Pattern' injects energy and style into your home, proving that practical flooring can also be a stunning design element.",
+            "image": None
+        },
+        {
+            "title": "Luxury King Bed",
+            "category": "Beds, Luxury",
+            "description": "Transform your bedroom into a five-star retreat with our 'Luxury King Bed'. This masterfully crafted bed frame combines robust engineering with exquisite design, offering the perfect blend of style and support for a restful night's sleep.\n\nThe headboard is upholstered in premium velvet fabric, featuring deep button tufting that adds a touch of classic elegance. The frame is constructed from solid hardwood, ensuring stability and longevity. A high-quality slat system supports your mattress, providing optimal ventilation and distributing weight evenly to prevent sagging.\n\nAvailable with optional under-bed storage drawers, the 'Luxury King Bed' maximizes functionality without compromising aesthetics. Whether reading a book against the plush headboard or drifting off to sleep, this bed provides the ultimate comfort experience. Elevate your bedroom decor with this centerpiece of luxury and craftsmanship.",
+            "image": None
+        },
+        {
+            "title": "Persian Style Rug",
+            "category": "Rugs, Traditional",
+            "description": "Add a timeless masterpiece to your floor with our 'Persian Style Rug'. Inspired by centuries-old traditional designs, this rug features intricate floral motifs and a rich, complex color palette that tells a story of heritage and artistry.\n\nWoven from high-quality, soft fibers, it offers a luxurious feel underfoot while being durable enough to withstand high traffic areas. The detailed border and central medallion create a structured, elegant look that anchors any room, from formal dining areas to cozy living rooms.\n\nStain-resistant and easy to clean, this rug combines the beauty of antique styling with the practicality of modern materials. Whether placed on hardwood floors or layered over carpet, the 'Persian Style Rug' adds warmth, texture, and a sense of history to your home decor.",
+            "image": None
+        }
+    ]
+
+    for i, item in enumerate(items):
+        CatalogueItem.objects.create(
+            title=item["title"],
+            description=item["description"],
+            category=item["category"],
+            order=i
+        )
+    print("Catalogue items created.")
+
 if __name__ == '__main__':
     seed()
+    create_ads()
+    create_selling_points()
+    create_catalogue()

@@ -64,7 +64,7 @@ export default function Testimonials() {
                     <div
                         key={dotIndex}
                         onClick={() => setCurrent(dotIndex)}
-                        className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${dotIndex === current ? "bg-blue-600" : "bg-blue-300 dark:bg-blue-900"
+                        className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${dotIndex === current ? "bg-primary" : "bg-primary-200 dark:bg-gray-700 hover:bg-primary-300 dark:hover:bg-gray-600"
                             }`}
                     />
                 ))}

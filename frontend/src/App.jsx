@@ -14,6 +14,7 @@ import AdminBlogs from './pages/admin/AdminBlogs';
 import AdminTeam from './pages/admin/AdminTeam';
 import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminAds from './pages/admin/AdminAds';
+import AdminMedia from './pages/admin/AdminMedia';
 import AdminMessages from "./pages/admin/AdminMessages";
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -29,68 +30,83 @@ import Blog from './pages/Blog';
 import BlogDetails from './pages/BlogDetails';
 import ProductDetails from './pages/ProductDetails';
 import NotFound from './pages/NotFound';
+import LegalPage from './pages/LegalPage';
+import ComingSoon from './pages/ComingSoon';
 import { Navigate } from 'react-router-dom';
-
 import { ToastProvider } from './context/ToastContext';
-
 import ScrollToTop from './components/ScrollToTop';
+import { ConfirmProvider } from './context/ConfirmContext';
 
 function App() {
   console.log("App component rendering");
   return (
     <ThemeProvider>
       <ToastProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<ClientLayout />}>
-                {/* Client Routes */}
-                <Route index element={<Home />} />
-                <Route path="about" element={<About />} />
-                <Route path="contact" element={<Contact />} />
-                <Route path="blog" element={<Blog />} />
-                <Route path="blog/:id" element={<BlogDetails />} />
-                <Route path="shop" element={<Shop />} />
-                <Route path="catalogue" element={<Catalogue />} />
-                <Route path="product/:id" element={<ProductDetails />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="login" element={<Navigate to="/auth/login" replace />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
+        <ConfirmProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <ScrollToTop />
+              <Routes>
+                <Route path="/" element={<ClientLayout />}>
+                  {/* Client Routes */}
+                  <Route index element={<Home />} />
+                  <Route path="about" element={<About />} />
+                  <Route path="contact" element={<Contact />} />
+                  <Route path="blog" element={<Blog />} />
+                  <Route path="blog/:id" element={<BlogDetails />} />
+                  <Route path="shop" element={<Shop />} />
+                  <Route path="catalogue" element={<Catalogue />} />
+                  <Route path="product/:id" element={<ProductDetails />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="product/:id" element={<ProductDetails />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="login" element={<Navigate to="/auth/login" replace />} />
 
-              <Route path="/auth/login" element={<Login />} />
-              <Route path="/auth/register" element={<Register />} />
+                  {/* Dynamic Pages */}
+                  <Route path="page/:slug" element={<LegalPage />} />
+                  <Route path="privacy" element={<LegalPage defaultSlug="privacy-policy" />} />
+                  <Route path="terms" element={<LegalPage defaultSlug="terms-and-conditions" />} />
+
+                  {/* Coming Soon Placeholders */}
+                  <Route path="delivery" element={<ComingSoon />} />
+                  <Route path="guide" element={<ComingSoon />} />
+                  <Route path="store" element={<ComingSoon />} />
+
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+
+                <Route path="/auth/login" element={<Login />} />
+                <Route path="/auth/register" element={<Register />} />
 
 
-              {/* Admin Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
 
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="users" element={<Users />} />
-                <Route path="products" element={<Products />} />
-                <Route path="categories" element={<AdminCategories />} />
-                <Route path="orders" element={<Orders />} />
-                <Route path="users" element={<Users />} />
-                <Route path="blogs" element={<AdminBlogs />} />
-                {/* <Route path="team" element={<AdminTeam />} /> Moved to Settings */}
-                <Route path="testimonials" element={<AdminTestimonials />} />
-                <Route path="ads" element={<AdminAds />} />
-                <Route path="ads" element={<AdminAds />} />
-                <Route path="ads" element={<AdminAds />} />
-                <Route path="messages" element={<AdminMessages />} />
-                <Route path="settings" element={<AdminSettings />} />
-                <Route path="profile" element={<AdminProfile />} />
-                <Route path="blogs" element={<AdminBlogs />} />
-                {/* <Route path="team" element={<AdminTeam />} /> */}
-                {/* <Route path="testimonials" element={<AdminTestimonials />} /> */}
-                {/* <Route path="ads" element={<AdminAds />} /> */}
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="users" element={<Users />} />
+                  <Route path="products" element={<Products />} />
+                  <Route path="categories" element={<AdminCategories />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="users" element={<Users />} />
+                  <Route path="blogs" element={<AdminBlogs />} />
+                  {/* <Route path="team" element={<AdminTeam />} /> Moved to Settings */}
+                  <Route path="testimonials" element={<AdminTestimonials />} />
+                  <Route path="ads" element={<AdminAds />} />
+                  <Route path="media" element={<AdminMedia />} />
+                  <Route path="messages" element={<AdminMessages />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                  <Route path="profile" element={<AdminProfile />} />
+                  <Route path="blogs" element={<AdminBlogs />} />
+                  {/* <Route path="team" element={<AdminTeam />} /> */}
+                  {/* <Route path="testimonials" element={<AdminTestimonials />} /> */}
+                  {/* <Route path="ads" element={<AdminAds />} /> */}
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </ConfirmProvider>
       </ToastProvider>
     </ThemeProvider>
   );
