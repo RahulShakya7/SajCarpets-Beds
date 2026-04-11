@@ -32,11 +32,9 @@ const Toast = ({ message, type, onClose }) => {
         >
             {icons[type]}
             <p className="flex-1 text-gray-800 dark:text-gray-100 font-medium text-sm">{message}</p>
-            {type !== 'loading' && (
-                <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                    <X size={18} />
-                </button>
-            )}
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                <X size={18} />
+            </button>
         </motion.div>
     );
 };
@@ -45,7 +43,7 @@ export function ToastProvider({ children }) {
     const [toasts, setToasts] = useState([]);
 
     const addToast = (message, type = 'info', duration = 3000) => {
-        const id = Date.now();
+        const id = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         setToasts((prev) => [...prev, { id, message, type }]);
 
         if (duration && type !== 'loading') {

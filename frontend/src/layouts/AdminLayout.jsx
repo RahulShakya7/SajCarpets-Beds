@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import ThemeToggle from "../components/ThemeToggle";
 import { House, Users, Package, Tag, ShoppingCart, Newspaper, UsersThree, ChatText, Megaphone, EnvelopeSimple, Gear, SignOut, User, List, Image } from "@phosphor-icons/react";
 
@@ -21,6 +22,7 @@ const navItems = [
 
 const AdminLayout = () => {
     const { user, loading, logout } = useAuth();
+    const { addToast } = useToast();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -55,7 +57,11 @@ const AdminLayout = () => {
                 <p>You are logged in as <strong>{user.username}</strong>, but you do not have admin permissions.</p>
                 <p className="text-sm text-gray-500">Debug: is_staff = {String(user.is_staff)}</p>
                 <button
-                    onClick={() => { logout(); navigate("/admin/login"); }}
+                    onClick={() => { 
+                        logout(); 
+                        addToast("Logged out successfully", "info"); 
+                        navigate("/admin/login"); 
+                    }}
                     className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
                 >
                     Logout & Login as Admin
@@ -98,6 +104,7 @@ const AdminLayout = () => {
                     <button
                         onClick={() => {
                             logout();
+                            addToast("Logged out successfully", "info");
                             navigate('/admin/login');
                         }}
                         className="flex items-center gap-4 px-4 py-3 w-full rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"

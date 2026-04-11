@@ -5,6 +5,7 @@ import SearchPopup from "./SearchPopup";
 import ThemeToggle from "./ThemeToggle";
 
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import AuthModal from "./auth/AuthModal";
 
 const navLinks = [
@@ -17,6 +18,7 @@ const navLinks = [
 
 const Header = () => {
     const { user, logout } = useAuth();
+    const { addToast } = useToast();
     const [menuOpen, setMenuOpen] = useState(false);
     const location = useLocation();
     const [searchOpen, setSearchOpen] = useState(false);
@@ -78,7 +80,10 @@ const Header = () => {
                                             My Profile
                                         </Link>
                                         <button
-                                            onClick={logout}
+                                            onClick={() => {
+                                                logout();
+                                                addToast("Logged out successfully", "info");
+                                            }}
                                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         >
                                             Logout
