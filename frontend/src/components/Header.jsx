@@ -1,4 +1,4 @@
-import { List, MagnifyingGlass, User, X } from "@phosphor-icons/react";
+import { List, MagnifyingGlass, User, X, SignOut, Heart, SignIn } from "@phosphor-icons/react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SearchPopup from "./SearchPopup";
@@ -76,17 +76,20 @@ const Header = () => {
                                         <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
                                             <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user.username}</p>
                                         </div>
-                                        <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                            My Profile
+                                        <Link to="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                            <User size={18} /> My Profile
+                                        </Link>
+                                        <Link to="/wishlist" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                            <Heart size={18} /> My Wishlist
                                         </Link>
                                         <button
                                             onClick={() => {
                                                 logout();
                                                 addToast("Logged out successfully", "info");
                                             }}
-                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         >
-                                            Logout
+                                            <SignOut size={18} /> Logout
                                         </button>
                                     </div>
                                 </>
@@ -136,17 +139,45 @@ const Header = () => {
                             {label}
                         </Link>
                     ))}
-                    {/* Mobile Login Button (replaces Link) */}
-                    {!user && (
+                    {/* Mobile Auth Links */}
+                    <div className="w-full h-px bg-gray-200 dark:bg-gray-700 my-1"></div>
+                    {!user ? (
                         <button
                             onClick={() => {
                                 setMenuOpen(false);
                                 setIsAuthModalOpen(true);
                             }}
-                            className="text-lg font-semibold w-full py-2 px-2 rounded text-left text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className="flex items-center gap-3 text-lg font-normal w-full py-2 px-2 rounded text-left text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
-                            LOGIN / REGISTER
+                            <SignIn size={24} /> LOGIN / REGISTER
                         </button>
+                    ) : (
+                        <>
+                            <Link
+                                to="/profile"
+                                className="flex items-center gap-3 text-lg font-normal w-full py-2 px-2 rounded text-left text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                <User size={24} /> My Profile
+                            </Link>
+                            <Link
+                                to="/wishlist"
+                                className="flex items-center gap-3 text-lg font-normal w-full py-2 px-2 rounded text-left text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                <Heart size={24} /> My Wishlist
+                            </Link>
+                            <button
+                                onClick={() => {
+                                    setMenuOpen(false);
+                                    logout();
+                                    addToast("Logged out successfully", "info");
+                                }}
+                                className="flex items-center gap-3 text-lg font-normal w-full py-2 px-2 rounded text-left text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                                <SignOut size={24} /> Logout
+                            </button>
+                        </>
                     )}
                 </nav>
             </div>

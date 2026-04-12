@@ -7,9 +7,11 @@ import CountdownTimer from "../components/Countdown";
 import StarRating from "../components/StarRating";
 import ReviewsSection from "../components/ReviewsSection";
 import ProductCard from "../components/shared/ProductCard";
+import { useWishlist } from "../context/WishlistContext";
 
 export default function ProductDetails() {
     const { addToast } = useToast();
+    const { addToWishlist } = useWishlist();
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -122,7 +124,7 @@ export default function ProductDetails() {
 
                         <div className="flex gap-6 mb-6">
                             <Button
-                                onClick={() => addToast("Added to Wishlist", "success")}
+                                onClick={() => addToWishlist(product)}
                                 className="border border-gray-300 dark:border-gray-600 bg-secondar-100 dark:bg-gray-800 px-6 py-3 rounded-lg text-base text-gray-400 hover:text-primary transition-colors"
                             >
                                 Wishlist

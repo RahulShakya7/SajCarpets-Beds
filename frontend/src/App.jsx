@@ -36,6 +36,8 @@ import { Navigate } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import ScrollToTop from './components/ScrollToTop';
 import { ConfirmProvider } from './context/ConfirmContext';
+import { WishlistProvider } from './context/WishlistContext';
+import Wishlist from './pages/Wishlist';
 
 function App() {
   console.log("App component rendering");
@@ -44,7 +46,8 @@ function App() {
       <ToastProvider>
         <ConfirmProvider>
           <AuthProvider>
-            <BrowserRouter>
+            <WishlistProvider>
+              <BrowserRouter>
               <ScrollToTop />
               <Routes>
                 <Route path="/" element={<ClientLayout />}>
@@ -60,6 +63,7 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                   <Route path="product/:id" element={<ProductDetails />} />
                   <Route path="profile" element={<Profile />} />
+                  <Route path="wishlist" element={<Wishlist />} />
                   <Route path="login" element={<Navigate to="/auth/login" replace />} />
 
                   {/* Dynamic Pages */}
@@ -105,6 +109,7 @@ function App() {
                 </Route>
               </Routes>
             </BrowserRouter>
+            </WishlistProvider>
           </AuthProvider>
         </ConfirmProvider>
       </ToastProvider>
